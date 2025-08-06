@@ -1,109 +1,143 @@
-## 📦 PAC-RAG: Personalized AI Chat with RAG & Milvus
+# 📦 PAC-RAG: Personalized AI Chat with RAG & Milvus
 
 This project implements a simple **Retrieval-Augmented Generation (RAG)** system using:
 
-* **LangChain4j** (Java SDK)
-* **Ollama** for local embedding generation
-* **Milvus** as a vector database
+* 🧠 **LangChain4j** (Java SDK)
+* 🔍 **Ollama** for local embedding generation and chat completion
+* 📦 **Milvus** as a vector database
 
-It allows you to:
+The system allows you to:
 
-* Index and embed text files
-* Store embeddings in Milvus
-* Search similar content using embeddings
-* Use the results to build intelligent Q\&A or recommendation systems
+* Index and embed text files into Milvus
+* Store and retrieve relevant information based on user questions
+* Use a local LLM (e.g., LLaMA2) to generate intelligent responses based on retrieved context
 
 ---
 
-## 🚀 Project Structure
+## 📁 Project Structure
 
-```bash
-src/
-└── main/
-    └── java/
-        └── com.pac_rag/
-            ├── EmbeddingService.java         # Connects to Ollama and generates embeddings
-            ├── MilvusService.java            # Connects to Milvus and handles search
-            ├── MilvusFileIndexer.java        # Reads files, splits them, and indexes into Milvus
-            └── Main.java                     # Main class for testing (optional)
+```
+pac_rag/
+├── MainApp.java            # Main class to run the RAG system
+├── EmbeddingService.java   # Handles embedding generation (via Ollama)
+├── MilvusService.java      # Manages connection to Milvus and searching
+├── MilvusFileIndexer.java  # Reads file and indexes its content into Milvus
+├── LLMService.java         # Sends prompts to LLM and retrieves answers
+├── HealthDataX.txt         # (Sample file to be indexed)
 ```
 
 ---
 
-## ⚙️ Requirements
+## 🛠 Requirements
 
 * Java 17+
-* [Ollama](https://ollama.com) (running locally on `http://localhost:11434`)
-
-  * Recommended model: `all-minilm`
-* [Milvus Standalone](https://milvus.io/docs/install_standalone-docker.md)
-
-  * Running on `http://localhost:19530`
-* Maven or Gradle for building the project
+* Docker (for Milvus & Ollama)
+* LangChain4j dependencies (added via Maven or Gradle)
+* Internet (only for downloading models once, if using Ollama)
 
 ---
 
-## 🛠️ How to Run
+## 🧪 Getting Started
 
-1. **Start Ollama:**
+### 1. Clone the Repository
 
-   ```bash
-   ollama run all-minilm
-   ```
+```bash
+git clone https://github.com/your-username/pac-rag.git
+cd pac-rag
+```
 
-2. **Start Milvus (Docker example):**
+### 2. Start Milvus and Ollama Locally
 
-   ```bash
-   docker-compose up -d
-   ```
+**Milvus:**
 
-3. **Index a File:**
-   In your Java code or `Main.java`, use:
+```bash
+docker compose -f milvus-standalone-docker-compose.yml up -d
+```
 
-   ```java
-   MilvusFileIndexer indexer = new MilvusFileIndexer(embeddingModel, embeddingStore);
-   indexer.indexFile("path/to/your/textfile.txt");
-   ```
+**Ollama:**
 
-4. **Search for Similar Content:**
+```bash
+ollama run all-minilm
+ollama run llama2
+```
 
-   ```java
-   Embedding queryEmbedding = embeddingService.embed("What is healthy nutrition?");
-   List<EmbeddingMatch<TextSegment>> results = milvusService.search(queryEmbedding, 3);
-   ```
+> Make sure both are accessible at:
+>
+> * Milvus: `http://localhost:19530`
+> * Ollama: `http://localhost:11434`
 
----
+### 3. Run the Application
 
-## 💡 Use Case Example
+```bash
+# From your IDE or command line
+# Run MainApp.java
+```
 
-Suppose you have a medical knowledge base. You can index medical articles, then use this system to:
+You will be prompted:
 
-* Ask natural language questions
-* Find the most relevant paragraphs
-* Feed them to a language model to generate rich, informed answers
-
----
-
-## 📚 Technologies Used
-
-* 🧠 **LangChain4j** – LLM orchestration in Java
-* 📊 **Milvus** – Vector database for efficient similarity search
-* 🔤 **Ollama** – Local embedding & LLMs backend
-* ☕ **Java** – Strong typed RAG implementation
+* Whether to index the file `HealthDataX.txt`
+* To enter a question
+* The system will search Milvus and respond using the LLM
 
 ---
 
-## ✍️ Author
+## 🧠 Example Interaction
 
-**Mariam Sayed**
-[LinkedIn](https://www.linkedin.com/in/mariam-sayed-0379b7273)
+```
+Do you want to index the file into Milvus? (yes/no): yes
+✔ File indexed successfully into Milvus.
+
+Ask your question: What are the symptoms of heart disease?
+
+Sending question to LLM...
+Answer:
+- Chest pain
+- Shortness of breath
+- Fatigue
+```
 
 ---
 
-## 📌 Notes
+## ⚙ Configuration
 
-* Ensure that Ollama and Milvus are **both running** before executing.
-* You can switch to another embedding model by editing `EmbeddingService.java`.
-* Suitable for applications like: **healthcare chatbots**, **document search**, and **intelligent assistants**.
+You can customize:
+
+* File to index: Change `HealthDataX.txt` in `MainApp.java`
+* Model names: Modify in `LLMService.java` and `EmbeddingService.java`
+* Embedding dimension: Adjust in `MilvusService.java` (`dimension(384)`)
+
+---
+
+## 🧾 Tech Stack
+
+| Component | Tool / Model          |
+| --------- | --------------------- |
+| Vector DB | Milvus                |
+| Embedding | all-minilm via Ollama |
+| LLM       | LLaMA2 via Ollama     |
+| Framework | LangChain4j           |
+| Language  | Java                  |
+
+---
+
+## 🧹 TODO / Enhancements
+
+* [ ] Add a REST API interface
+* [ ] Support for multiple documents
+* [ ] Web interface with Spring Boot
+* [ ] Dynamic model switching
+
+---
+
+## 🤝 author 
+
+Mariam Mohamed Sayed
+GitHub: [https://github.com/mariam-sayed8]
+
+---
+
+## 💡 Inspiration
+
+This project is inspired by the idea of **context-aware local chatbots** that utilize personal documents or datasets to answer user queries more accurately.
 
 ---
